@@ -1,0 +1,30 @@
+volumes:
+  pg_data:
+  static:
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  backend:
+    image: samat1233/taski_backend
+    env_file: .env
+    volumes:
+      - static:/backend_static/
+
+  frontend:
+    env_file: .env
+    image: samat1233/taski_frontend
+    command: sh -c "npm run build && cp -r /app/build/. /frontend_static/"
+    volumes:
+      - static:/frontend_static/
+
+  gateway:
+    image: samat1233/taski_gateway
+    env_file: .env
+    volumes:
+      - static:/static/
+    ports:
+      - 8000:80
